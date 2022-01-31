@@ -46,13 +46,14 @@ const useStyles = makeStyles(theme => ({
     button: {
         width: '320px',
         height: '80px',
+        border: '0px',
         borderRadius: "20em",
         color: 'white',
         backgroundColor: 'black',
         textAlign: 'center',
         textTransform: 'uppercase',
-        fontSize: '22px',
-        fontWeight: 'medium',
+        fontSize: '24px',
+        fontWeight: 'bold',
         cursor: 'pointer',
     },
 }))
