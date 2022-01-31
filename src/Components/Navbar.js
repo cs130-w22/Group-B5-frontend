@@ -8,7 +8,10 @@ function Navbar(props){
         <div className={classes.nav}>
             <p style={{'visibility': 'hidden'}}>Login</p>
             <Link to="/" className={classes.title}>Leetracer</Link>
+            <div>
+            <Link to="/signup" className={classes.item} style={{ marginRight: '.7rem' }}>Sign Up</Link>
             <Link to="/login" className={classes.item}>Login</Link>
+            </div>
         </div>
     )
 }
@@ -39,4 +42,4 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export default Navbar
+export default Navbar;
