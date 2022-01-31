@@ -5,13 +5,13 @@ import CardContent from '@mui/material/CardContent';
 import { API_URL } from '../config'
 import axios from 'axios';
 
-function Login(props){
+function Signup(props){
     const classes = useStyles();
     const [username, changeUsername] = useState("")
     const [password, changePassword] = useState("")
     const [usernameError, changeUsernameError] = useState(false)
     const [passwordError, changePasswordError] = useState(false)
-    const [loginError, changeLoginError] = useState(false)
+    const [signupError, changeSignupError] = useState(false)
     
     let handleSubmit = async (e) => {
         e.preventDefault()
@@ -31,10 +31,10 @@ function Login(props){
         changePasswordError(false)
 
         //make API request
-        let res = await axios.post(`${API_URL}/auth/login`, {username, password})
+        let res = await axios.post(`${API_URL}/auth/signup`, {username, password})
         
         if(!res || res.status != 200){
-            changeLoginError(true);
+            changeSignupError(true);
             return;
         }
 
@@ -47,7 +47,7 @@ function Login(props){
     return (
         <Card className={classes.container} variant="outlined">
             <CardContent>
-                <h3 className={classes.title}>Login to Leetracer</h3>
+                <h3 className={classes.title}>Create a Leetracer Account</h3>
                 <form className={classes.form} onSubmit={handleSubmit}>
                 <label className={classes.inputLabel}>Username</label>
                 <input type="text" value={username} className={classes.input}
@@ -57,9 +57,9 @@ function Login(props){
                 <input type="password" value={password} className={classes.input}
                     onChange={(e)=>{changePassword(e.target.value)}} />
                 <p className={classes.required} style={passwordError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>Required</p>
-                <button type="submit" className={classes.submitButton}> Login </button>
-                <p className={classes.loginError} style={loginError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
-                    There was an error logging in. Please try again
+                <button type="submit" className={classes.submitButton}> Create Account </button>
+                <p className={classes.signupError} style={signupError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
+                    There was an error creating an account. Please try again
                 </p>
                 </form>
             </CardContent>
@@ -108,7 +108,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: '3px',
         marginTop: '12px'
     },
-    loginError: {
+    signupError: {
         padding: '10px',
         width: '100%',
         fontSize: '13px',
@@ -120,5 +120,5 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-export default Login;
+export default Signup;
 
