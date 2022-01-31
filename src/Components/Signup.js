@@ -31,7 +31,7 @@ function Signup(props){
         changePasswordError(false)
 
         //make API request
-        let res = await axios.post(`${API_URL}/signup`, {username, password})
+        let res = await axios.post(`${API_URL}/auth/signup`, {username, password})
         
         if(!res || res.status != 200){
             changeSignupError(true);

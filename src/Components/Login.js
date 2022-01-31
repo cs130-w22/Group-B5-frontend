@@ -31,7 +31,7 @@ function Login(props){
         changePasswordError(false)
 
         //make API request
-        let res = await axios.post(`${API_URL}/login`, {username, password})
+        let res = await axios.post(`${API_URL}/auth/login`, {username, password})
         
         if(!res || res.status != 200){
             changeLoginError(true);
