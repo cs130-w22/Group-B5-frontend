@@ -1,17 +1,16 @@
 import { useState } from 'react'
 import { makeStyles } from '@mui/styles';
+import { useAuth } from '../config'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { API_URL } from '../config'
-import axios from 'axios';
 
 function Signup(props){
+    const { signUp, error } = useAuth();
     const classes = useStyles();
     const [username, changeUsername] = useState("")
     const [password, changePassword] = useState("")
     const [usernameError, changeUsernameError] = useState(false)
     const [passwordError, changePasswordError] = useState(false)
-    const [signupError, changeSignupError] = useState(false)
     
     let handleSubmit = async (e) => {
         e.preventDefault()
@@ -30,18 +29,7 @@ function Signup(props){
         changeUsernameError(false)
         changePasswordError(false)
 
-        //make API request
-        let res = await axios.post(`${API_URL}/auth/signup`, {username, password})
-        
-        if(!res || res.status != 200){
-            changeSignupError(true);
-            return;
-        }
-
-        let {jwt} = res.data
-        
-        axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
-        document.cookie = `jwt=${jwt}`  
+       signUp(username, password)
     }
 
     return (
@@ -58,7 +46,7 @@ function Signup(props){
                     onChange={(e)=>{changePassword(e.target.value)}} />
                 <p className={classes.required} style={passwordError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>Required</p>
                 <button type="submit" className={classes.submitButton}> Create Account </button>
-                <p className={classes.signupError} style={signupError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
+                <p className={classes.signupError} style={error===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
                     There was an error creating an account. Please try again
                 </p>
                 </form>

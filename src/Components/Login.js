@@ -1,17 +1,16 @@
 import { useState } from 'react'
 import { makeStyles } from '@mui/styles';
+import { useAuth } from '../config'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { API_URL } from '../config'
-import axios from 'axios';
 
 function Login(props){
+    const { login, error } = useAuth();
     const classes = useStyles();
     const [username, changeUsername] = useState("")
     const [password, changePassword] = useState("")
     const [usernameError, changeUsernameError] = useState(false)
     const [passwordError, changePasswordError] = useState(false)
-    const [loginError, changeLoginError] = useState(false)
     
     let handleSubmit = async (e) => {
         e.preventDefault()
@@ -30,18 +29,7 @@ function Login(props){
         changeUsernameError(false)
         changePasswordError(false)
 
-        //make API request
-        let res = await axios.post(`${API_URL}/auth/login`, {username, password})
-        
-        if(!res || res.status != 200){
-            changeLoginError(true);
-            return;
-        }
-
-        let {jwt} = res.data
-        
-        axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
-        document.cookie = `jwt=${jwt}`  
+        login(username, password)
     }
 
     return (
@@ -58,7 +46,7 @@ function Login(props){
                     onChange={(e)=>{changePassword(e.target.value)}} />
                 <p className={classes.required} style={passwordError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>Required</p>
                 <button type="submit" className={classes.submitButton}> Login </button>
-                <p className={classes.loginError} style={loginError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
+                <p className={classes.loginError} style={error===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
                     There was an error logging in. Please try again
                 </p>
                 </form>
