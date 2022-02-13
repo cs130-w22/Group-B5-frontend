@@ -1,18 +1,22 @@
 import { useState } from 'react'
 import { makeStyles } from '@mui/styles';
 import { useAuth } from '../config'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
 function Signup(props){
-    const { signUp, error } = useAuth();
+    const { signUp, error, user } = useAuth();
     const classes = useStyles();
     const [username, changeUsername] = useState("")
     const [password, changePassword] = useState("")
     const [usernameError, changeUsernameError] = useState(false)
     const [passwordError, changePasswordError] = useState(false)
     
+    if(user){
+        return <Navigate to="/matchmaking" replace />;
+    }
+
     let handleSubmit = async (e) => {
         e.preventDefault()
         let set1, set2 = false
@@ -84,7 +88,7 @@ const useStyles = makeStyles(theme => ({
         color: 'white',
         border: 'none',
         padding: '10px',
-        fontSize: '16px',
+        fontSize: '15px',
         fontWeight: 'bold',
         textTransform: 'uppercase',
         boxSizing: 'border-box',
@@ -112,10 +116,10 @@ const useStyles = makeStyles(theme => ({
         display: 'block',
         border: '1px solid red',
         borderRadius: '5px',
-        marginBottom: '0'
+        marginTop: '8px'
     },
     redirect: {
-        margin: '10px 0px',
+        margin: '10px 0px 0px 0px',
         fontSize: '15px'
     }
 }))

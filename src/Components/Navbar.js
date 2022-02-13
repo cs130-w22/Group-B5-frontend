@@ -5,20 +5,34 @@ import { useAuth } from '../config'
 function Navbar(props){
     const classes = useStyles();
     const {user} = useAuth();
-    console.log(user)
+    if(user){
+        return (
+            <div className={classes.nav}>
+                <div className={classes.leftBox}>
+                    <Link to="/" className={classes.title}>Leetracer</Link>
+                </div>
+                <div className={classes.rightBox}>
+                    <Link to="/matchmaking" className={classes.item} style={{ marginRight: '.7rem' }}>Compete</Link>
+                    <Link to="/user-content" className={classes.item} style={{ marginRight: '.7rem' }}>User Content</Link>
+                    <Link to="/profile" className={classes.button}>My Profile</Link>
+                </div>
+            </div>
+        ) 
+    } else {
+        return (
+            <div className={classes.nav}>
+                <div className={classes.leftBox}>
+                    <Link to="/" className={classes.title}>Leetracer</Link>
+                </div>
+                <div className={classes.rightBox}>
+                    <Link to="/matchmaking" className={classes.item} style={{ marginRight: '.7rem' }}>Compete</Link>
+                    <Link to="/user-content" className={classes.item} style={{ marginRight: '.7rem' }}>User Content</Link>
+                    <Link to="/signup" className={classes.button}>Sign Up</Link>
+                </div>
+            </div>
+        ) 
+    }
     
-    return (
-        <div className={classes.nav}>
-            <div className={classes.leftBox}>
-                <Link to="/" className={classes.title}>Leetracer</Link>
-            </div>
-            <div className={classes.rightBox}>
-                <Link to="/matchmaking" className={classes.item} style={{ marginRight: '.7rem' }}>Compete</Link>
-                <Link to="/user-content" className={classes.item} style={{ marginRight: '.7rem' }}>User Content</Link>
-                <Link to="/signup" className={classes.button}>Sign Up</Link>
-            </div>
-        </div>
-    )
 }
 
 const useStyles = makeStyles(theme => ({ 

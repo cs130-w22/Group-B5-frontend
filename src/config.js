@@ -43,7 +43,7 @@ let AuthProvider = (props) => {
             setUser({token, username});
         
             setError(false)
-            navigate('/protected')
+            navigate('/matchmaking')
         } catch(e){
             setError(true)
         }
@@ -65,7 +65,7 @@ let AuthProvider = (props) => {
             setUser({token, username});
         
             setError(false)
-            navigate('/protected')
+            navigate('/matchmaking')
         } catch(e){
             setError(true)
         }
