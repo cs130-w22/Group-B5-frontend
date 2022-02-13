@@ -1,16 +1,21 @@
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom'
+import { useAuth } from '../config'
 
 function Navbar(props){
     const classes = useStyles();
+    const {user} = useAuth();
+    console.log(user)
     
     return (
         <div className={classes.nav}>
-            <p style={{'visibility': 'hidden'}}>Login</p>
-            <Link to="/" className={classes.title}>Leetracer</Link>
-            <div>
-            <Link to="/signup" className={classes.item} style={{ marginRight: '.7rem' }}>Sign Up</Link>
-            <Link to="/login" className={classes.item}>Login</Link>
+            <div className={classes.leftBox}>
+                <Link to="/" className={classes.title}>Leetracer</Link>
+            </div>
+            <div className={classes.rightBox}>
+                <Link to="/matchmaking" className={classes.item} style={{ marginRight: '.7rem' }}>Compete</Link>
+                <Link to="/user-content" className={classes.item} style={{ marginRight: '.7rem' }}>User Content</Link>
+                <Link to="/signup" className={classes.button}>Sign Up</Link>
             </div>
         </div>
     )
@@ -19,26 +24,51 @@ function Navbar(props){
 const useStyles = makeStyles(theme => ({ 
     nav: {
         width: '100%',
-        height: '60px',
+        height: '65px',
         margin: '0px',
         padding: '10px 20px',
         boxSizing: 'border-box',
-        backgroundColor: '#007000',
+        backgroundColor: 'white',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
     },
     item: {
-        color: 'white',
+        color: '#3b4653',
         textDecoration: 'none',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        fontWeight: 'bold'
+    },
+    leftBox: {
+        marginLeft: '50px'
+    },
+    rightBox: {
+        width: '500px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginRight: '50px'
     },
     title: {
-        color: 'white',
+        color: 'black',
         margin: 0,
-        fontSize: '40px',
+        fontSize: '26px',
         letterSpacing: '1px',
         textDecoration: 'none',
+    },
+    button: {
+        color: 'white',
+        backgroundColor: '#28313c',
+        textDecoration: 'none',
+        cursor: 'pointer',
+        boxSizing: 'border-box',
+        borderRadius: '3px',
+        width: '110px',
+        height: '35px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontWeight: 'bold'
     }
 }))
 

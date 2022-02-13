@@ -8,7 +8,7 @@ const userContext = React.createContext({});
 
 let AuthProvider = (props) => {
     let navigate = useNavigate()
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState(undefined)
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false);
     const [loadingInitial, setLoadingInitial] = useState(false);

@@ -44,17 +44,17 @@ const useStyles = makeStyles(theme => ({
     },
     title: {
         fontSize: '36px',
-        color: 'black',
+        color: '#3b4653',
         textAlign: 'center',
     },
     subtitle: {
         fontSize: '24px',
-        color: 'black',
+        color: '#3b4653',
         textAlign: 'center',
     },
     body: {
         fontSize: '22px',
-        color: 'gray',
+        color: '#798da2',
         textAlign: 'center',
     },
 }))
