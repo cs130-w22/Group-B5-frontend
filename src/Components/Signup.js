@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { makeStyles } from '@mui/styles';
 import { useAuth } from '../config'
+import { Link } from 'react-router-dom'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
@@ -46,6 +47,7 @@ function Signup(props){
                     onChange={(e)=>{changePassword(e.target.value)}} />
                 <p className={classes.required} style={passwordError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>Required</p>
                 <button type="submit" className={classes.submitButton}> Create Account </button>
+                <p className={classes.redirect}>Already have an account? <Link to="/login">Login</Link></p>
                 <p className={classes.signupError} style={error===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
                     There was an error creating an account. Please try again
                 </p>
@@ -78,11 +80,16 @@ const useStyles = makeStyles(theme => ({
     },
     submitButton: {
         width: '100%',
+        backgroundColor: '#28313c',
+        color: 'white',
+        border: 'none',
         padding: '10px',
-        fontSize: '14px',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
         boxSizing: 'border-box',
-        display: 'block',
-        marginTop: '12px',
+        margin: '7px auto 0px auto',
+        borderRadius: '3px',
         cursor: 'pointer'
     },
     required: {
@@ -104,7 +111,12 @@ const useStyles = makeStyles(theme => ({
         boxSizing: 'border-box',
         display: 'block',
         border: '1px solid red',
-        borderRadius: '5px'
+        borderRadius: '5px',
+        marginBottom: '0'
+    },
+    redirect: {
+        margin: '10px 0px',
+        fontSize: '15px'
     }
 }))
 
