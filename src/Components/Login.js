@@ -1,17 +1,22 @@
 import { useState } from 'react'
+import { Link, Navigate } from 'react-router-dom'
 import { makeStyles } from '@mui/styles';
 import { useAuth } from '../config'
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 
 function Login(props){
-    const { login, error } = useAuth();
+    const { login, error, user } = useAuth();
     const classes = useStyles();
     const [username, changeUsername] = useState("")
     const [password, changePassword] = useState("")
     const [usernameError, changeUsernameError] = useState(false)
     const [passwordError, changePasswordError] = useState(false)
     
+    if(user){
+        return <Navigate to="/matchmaking" replace />;
+    }
+
     let handleSubmit = async (e) => {
         e.preventDefault()
         let set1, set2 = false
@@ -46,6 +51,7 @@ function Login(props){
                     onChange={(e)=>{changePassword(e.target.value)}} />
                 <p className={classes.required} style={passwordError===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>Required</p>
                 <button type="submit" className={classes.submitButton}> Login </button>
+                <p className={classes.redirect}>Don't have an account? <Link to="/signup">Sign up</Link></p>
                 <p className={classes.loginError} style={error===true ? {visibility: 'visible'} : {visibility: 'hidden'}}>
                     There was an error logging in. Please try again
                 </p>
@@ -78,11 +84,16 @@ const useStyles = makeStyles(theme => ({
     },
     submitButton: {
         width: '100%',
+        backgroundColor: '#28313c',
+        color: 'white',
+        border: 'none',
         padding: '10px',
-        fontSize: '14px',
+        fontSize: '15px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
         boxSizing: 'border-box',
-        display: 'block',
-        marginTop: '12px',
+        margin: '7px auto 0px auto',
+        borderRadius: '3px',
         cursor: 'pointer'
     },
     required: {
@@ -104,7 +115,12 @@ const useStyles = makeStyles(theme => ({
         boxSizing: 'border-box',
         display: 'block',
         border: '1px solid red',
-        borderRadius: '5px'
+        borderRadius: '5px',
+        marginTop: '8px'
+    },
+    redirect: {
+        margin: '10px 0px 0px 0px',
+        fontSize: '15px'
     }
 }))
 

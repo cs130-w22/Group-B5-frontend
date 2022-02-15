@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
         height: '600px',
         margin: 'auto auto auto auto',
         padding: '40px',
-        backgroundColor: 'gainsboro',
+        backgroundColor: '#eef1f4',
         display: 'flex',
         justifyContent: 'space-around',
     },
@@ -35,12 +35,12 @@ const useStyles = makeStyles(theme => ({
     },
     title: {
         fontSize: '50px',
-        color: 'black',
+        color: '#3b4653',
         textAlign: 'left',
     },
     body: {
         fontSize: '22px',
-        color: 'gray',
+        color: '#7b8fa4',
         textAlign: 'left',
     },
     button: {
@@ -49,12 +49,13 @@ const useStyles = makeStyles(theme => ({
         border: '0px',
         borderRadius: "20em",
         color: 'white',
-        backgroundColor: 'black',
+        backgroundColor: '#29313c',
         textAlign: 'center',
         textTransform: 'uppercase',
         fontSize: '24px',
         fontWeight: 'bold',
         cursor: 'pointer',
+        marginTop: '20px'
     },
 }))
 

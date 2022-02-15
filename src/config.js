@@ -8,7 +8,7 @@ const userContext = React.createContext({});
 
 let AuthProvider = (props) => {
     let navigate = useNavigate()
-    const [user, setUser] = useState({})
+    const [user, setUser] = useState(undefined)
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false);
     const [loadingInitial, setLoadingInitial] = useState(false);
@@ -43,7 +43,7 @@ let AuthProvider = (props) => {
             setUser({token, username});
         
             setError(false)
-            navigate('/protected')
+            navigate('/matchmaking')
         } catch(e){
             setError(true)
         }
@@ -65,7 +65,7 @@ let AuthProvider = (props) => {
             setUser({token, username});
         
             setError(false)
-            navigate('/protected')
+            navigate('/matchmaking')
         } catch(e){
             setError(true)
         }
