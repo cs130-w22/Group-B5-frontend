@@ -4,6 +4,7 @@ import { AuthProvider } from './config'
 import Landing from './Pages/Landing'
 import Login from './Components/Login'
 import Signup from './Components/Signup'
+import Race from './Pages/Race'
 import Nav from './Components/Navbar'
 import Protected from './Components/Protected'
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/race" element={<Race />} />
       </Routes>
     </div>
     </AuthProvider>
