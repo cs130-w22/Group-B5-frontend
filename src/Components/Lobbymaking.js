@@ -1,63 +1,88 @@
 
 import { makeStyles } from '@mui/styles';
 import React, { useState } from "react";
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 function Lobbymaking(props){
 	const classes = useStyles();
-	const [cls, setCls] = useState(
-		{
-			activeObject: null,
-			objects: [{id:1}, {id:2}]
-		});
+	
+	const [diff, setDiff] = useState('easy');
+	
+	const [type, setType] = React.useState('random');
 
-	const [diff, setDiff] = useState(classes.buttonBlack);
-	function toggleActive(index){
-		setCls({ ...cls, activeObject: cls.objects[index] });
-	}
+	const handleType = (event, newType) => {
+	    setType(newType);
+	};
 
-	function toggleActiveStyles(index){
-		if(cls.objects[index] === cls.activeObjext)
-		{
-			return classes.buttonBlack;
-		}
-		else
-		{
-			return classes.buttonWhite;
-		}
-	}
+	const handleDiff = (event, newDiff) => {
+	    setDiff(newDiff);
+	};
+
 
 	return(
 	<div>
-		<h3>Create Lobby</h3>
-		<h4>Game Type</h4>
-		{
-			cls.objects.map((elements, index) => (
-			<button
-				key = {index}
-				className= {toggleActiveStyles(index)}
-				onClick={() => {
-					toggleActive(index);
-				}}
-			>Yeet</button>
-		))}
+		<div className={classes.container}>
+			<div className='leftBox'>
+				<h2>Create Lobby</h2>
+				<h4>Game Type</h4>
 
-		<button 
-		className={diff}
-		onClick={() => setDiff((diff) => (diff === classes.buttonBlack ? classes.buttonWhite : classes.buttonBlack))}
-		>  Private 
-		</button>
-		<button className={classes.buttonWhite}>  Random </button>
-		<h4>Difficulty</h4>
-		<button 
-		className={diff}
-		onClick={() => setDiff((diff) => (diff === classes.buttonBlack ? classes.buttonWhite : classes.buttonBlack))}
-		> 
-		Easy
-		</button>
+				<ToggleButtonGroup
+			      value={type}
+			      exclusive
+			      onChange={handleType}
+			      color='success'
+			      size='small'
 
+		    	>
+				      <ToggleButton value="random">
+				        Random
+				      </ToggleButton>
+				      <ToggleButton value="private">
+				        Private
+				      </ToggleButton>
+				</ToggleButtonGroup>
+				
+				<h4>Difficulty</h4>
+				
+				<ToggleButtonGroup
+			      value={diff}
+			      exclusive
+			      onChange={handleDiff}
+			      color='success'
+			      size='small'
+		    	>
+				      <ToggleButton value="easy">
+				        Easy
+				      </ToggleButton>
+				      <ToggleButton value="medium">
+				        Medium
+				      </ToggleButton>
+				      <ToggleButton value="hard">
+				        Hard
+				      </ToggleButton>
+				</ToggleButtonGroup>
+				<div>
+					<button className={classes.buttonBlack}>Start</button>
+				</div>
+			</div>
+		</div>
+
+		<div className={classes.containerB} >
+			
+				<h2>Join Lobby</h2> 
+		</div>
+		<div className={classes.containerB}>
+			<form >
+		      <label>Lobby Code:   
+		        <input className={classes.input} type="text" />
+		      </label>
+		    </form>
+		</div>
+		<div className={classes.containerB}>
+		    	<button className={classes.buttonBlack}>Go</button>
+		</div>
 	</div>
-	
-
 
 
 	)
@@ -66,39 +91,21 @@ function Lobbymaking(props){
 export default Lobbymaking;
 
 const useStyles = makeStyles(theme => ({ 
-    nav: {
-        width: '100%',
-        height: '65px',
-        margin: '0px',
-        padding: '10px 20px',
-        boxSizing: 'border-box',
-        backgroundColor: 'white',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between'
+    container: {
+        height: '300px',
+        padding: '40px',
+        backgroundColor: '#eef1f4',
+
     },
-    item: {
-        color: '#3b4653',
-        textDecoration: 'none',
-        cursor: 'pointer',
-        fontWeight: 'bold'
+    containerB: {
+    	display: 'flex',
+        justifyContent: 'center',
+        alignItems:'center'
+
     },
-    leftBox: {
-        marginLeft: '50px'
-    },
-    rightBox: {
-        width: '500px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginRight: '50px'
-    },
-    title: {
-        color: 'black',
-        margin: 0,
-        fontSize: '26px',
-        letterSpacing: '1px',
-        textDecoration: 'none',
+   body: {
+
+        textAlign: 'center',
     },
     buttonBlack: {
         width: '80px',
@@ -115,8 +122,8 @@ const useStyles = makeStyles(theme => ({
         marginTop: '20px'
     },
     buttonWhite: {
-        width: '80px',
-        height: '20px',
+        width: '120px',
+        height: '30px',
         border: '0px',
         borderRadius: "20em",
         color: 'black',
@@ -128,5 +135,11 @@ const useStyles = makeStyles(theme => ({
         cursor: 'pointer',
         marginTop: '20px'
     },
+    input: {
+    border: '1px solid #d9d9d9',
+    width:'50%',
+    padding: '10px',
+  
+	},
 }))
 
