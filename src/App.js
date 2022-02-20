@@ -6,10 +6,10 @@ import Login from './Components/Login'
 import Signup from './Components/Signup'
 import Nav from './Components/Navbar'
 import Protected from './Components/Protected'
+import Matchmaking from './Pages/Matchmaking'
 import { useState, useEffect } from 'react'
 import { io } from "socket.io-client"
 import { API_URL } from './config'
-
 
 function App() {
   const [socket, changeSocket] = useState(null)
@@ -22,20 +22,7 @@ function App() {
         token
       }
     });
-
-    sock.on("connect", () => {
-      console.log("Connected to socket server");
-      changeSocket(sock)
-    });
-    
-    sock.on("disconnect", () => {
-      console.log("Disconnected from socket server"); 
-    });
-
-    sock.on("connect_error", (e) => {
-      console.log(e.message)
-      //sock.connect();
-    });
+    return sock;
   }
 
   return (
@@ -46,6 +33,8 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/matchmaking/*" 
+          element={<Protected><Matchmaking changeSocket={changeSocket} socket={socket} openConnection={openConnection} /></Protected>} />
       </Routes>
     </div>
     </AuthProvider>
