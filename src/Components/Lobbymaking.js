@@ -1,15 +1,17 @@
 
 import { makeStyles } from '@mui/styles';
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-function Lobbymaking(props){
+function Lobbymaking({openConnection, changeSocket}){
 	const classes = useStyles();
+	let navigate = useNavigate()
 	
 	const [diff, setDiff] = useState('easy');
-	
-	const [type, setType] = React.useState('random');
+	const [type, setType] = useState('random');
+	const [lobbyCode, setCode] = useState("")
 
 	const handleType = (event, newType) => {
 	    setType(newType);
@@ -18,6 +20,36 @@ function Lobbymaking(props){
 	const handleDiff = (event, newDiff) => {
 	    setDiff(newDiff);
 	};
+
+	let handleJoin = () => {
+		navigate(`/matchmaking/${lobbyCode}`)
+	}
+
+	let handleMatchmaking = () => {
+		let socket = openConnection(type);
+
+		socket.on("connect", () => {
+			console.log("Connected to socket server");
+			changeSocket(socket)
+
+			socket.emit("create", diff)
+
+		});
+		  
+		socket.on("disconnect", () => {
+			console.log("Disconnected from socket server"); 
+		});
+	  
+		socket.on("connect_error", (e) => {
+			console.log(e.message)
+			//sock.connect();
+		});
+
+		socket.on("create", (code) => {
+			navigate(`/matchmaking/${code}`)
+		})
+
+	}
 
 
 	return(
@@ -33,7 +65,6 @@ function Lobbymaking(props){
 			      onChange={handleType}
 			      color='success'
 			      size='small'
-
 		    	>
 				      <ToggleButton value="random">
 				        Random
@@ -63,24 +94,23 @@ function Lobbymaking(props){
 				      </ToggleButton>
 				</ToggleButtonGroup>
 				<div>
-					<button className={classes.buttonBlack}>Start</button>
+					<button className={classes.buttonBlack} onClick={handleMatchmaking}>Start</button>
 				</div>
 			</div>
 		</div>
 
 		<div className={classes.containerB} >
-			
-				<h2>Join Lobby</h2> 
+			<h2>Join Lobby</h2> 
 		</div>
 		<div className={classes.containerB}>
 			<form >
 		      <label>Lobby Code:   
-		        <input className={classes.input} type="text" />
+		        <input value={lobbyCode} onChange={(e)=>{setCode(e.target.value)}} className={classes.input} type="text" />
 		      </label>
 		    </form>
 		</div>
 		<div className={classes.containerB}>
-		    	<button className={classes.buttonBlack}>Go</button>
+		    <button className={classes.buttonBlack} onClick={handleJoin}>Go</button>
 		</div>
 	</div>
 

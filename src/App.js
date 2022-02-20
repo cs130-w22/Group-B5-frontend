@@ -22,20 +22,7 @@ function App() {
         token
       }
     });
-
-    sock.on("connect", () => {
-      console.log("Connected to socket server");
-      changeSocket(sock)
-    });
-    
-    sock.on("disconnect", () => {
-      console.log("Disconnected from socket server"); 
-    });
-
-    sock.on("connect_error", (e) => {
-      console.log(e.message)
-      //sock.connect();
-    });
+    return sock;
   }
 
   return (
@@ -46,7 +33,8 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/matchmaking" element={<Matchmaking />} />
+        <Route path="/matchmaking/*" 
+          element={<Protected><Matchmaking changeSocket={changeSocket} socket={socket} openConnection={openConnection} /></Protected>} />
       </Routes>
     </div>
     </AuthProvider>
