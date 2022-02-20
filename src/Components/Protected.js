@@ -4,7 +4,7 @@ import { useAuth } from '../config'
 
 function Protected({children}){
     const info = useAuth();
-    console.log(info)
+    //console.log(info)
     if (!info.user) {
         return <Navigate to="/login" replace />;
     }
