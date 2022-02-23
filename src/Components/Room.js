@@ -56,7 +56,11 @@ function Room({socket, openConnection, changeSocket}){
 		socket.emit('start', params.lobbyCode)
 	}
 
-
+    useEffect(()=>{
+        return () =>{
+            socket.removeAllListeners();
+        };
+    }, [])
 
 	return(
 	<div className={classes.container}>
