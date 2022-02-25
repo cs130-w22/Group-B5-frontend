@@ -1,6 +1,7 @@
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom'
 import { useAuth } from '../config'
+import logo from './Leetracer_plain.png'
 
 function Navbar(props){
     const classes = useStyles();
@@ -9,7 +10,7 @@ function Navbar(props){
         return (
             <div className={classes.nav}>
                 <div className={classes.leftBox}>
-                    <Link to="/" className={classes.title}>Leetracer</Link>
+                    <Link to="/" className={classes.title}>Leetttracer</Link>
                 </div>
                 <div className={classes.rightBox}>
                     <Link to="/matchmaking" className={classes.item} style={{ marginRight: '.7rem' }}>Compete</Link>
