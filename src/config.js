@@ -1,13 +1,13 @@
 import axios from 'axios';
-import React, {useState, useContext, useEffect, useMemo, useHistory} from 'react'
-import { useNavigate } from "react-router-dom";
+import React, {useState, useContext, useEffect, useMemo} from 'react'
+import {useHistory } from "react-router-dom";
 
 const API_URL = "http://localhost:8080"
 
 const userContext = React.createContext({});
 
 let AuthProvider = (props) => {
-    let navigate = useNavigate()
+    //let navigate = useNavigate()
     const history = useHistory();
     const [user, setUser] = useState(undefined)
     const [error, setError] = useState(false)
