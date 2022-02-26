@@ -1,14 +1,13 @@
 import axios from 'axios';
 import React, {useState, useContext, useEffect, useMemo} from 'react'
-import {useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:8080"
 
 const userContext = React.createContext({});
 
 let AuthProvider = (props) => {
-    //let navigate = useNavigate()
-    const history = useHistory();
+    let navigate = useNavigate()
     const [user, setUser] = useState(undefined)
     const [error, setError] = useState(false)
     const [loading, setLoading] = useState(false);
@@ -44,7 +43,7 @@ let AuthProvider = (props) => {
             setUser({token, username});
         
             setError(false)
-            history.push('/matchmaking')
+            navigate('/matchmaking')
         } catch(e){
             setError(true)
         }
@@ -66,7 +65,7 @@ let AuthProvider = (props) => {
             setUser({token, username});
         
             setError(false)
-            history.push('/matchmaking')
+            navigate('/matchmaking')
         } catch(e){
             setError(true)
         }
