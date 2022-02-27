@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, {useState, useContext, useEffect, useMemo} from 'react'
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:8080"
+const API_URL = process.env.REACT_APP_API_URL
 
 const userContext = React.createContext({});
 
