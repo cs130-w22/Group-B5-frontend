@@ -4,6 +4,7 @@ import { AuthProvider } from './config'
 import Landing from './Pages/Landing'
 import Login from './Components/Login'
 import Signup from './Components/Signup'
+import UserContent from './Components/UserContent'
 import Nav from './Components/Navbar'
 import Protected from './Components/Protected'
 import Matchmaking from './Pages/Matchmaking'
@@ -35,6 +36,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/matchmaking/*" 
           element={<Protected><Matchmaking changeSocket={changeSocket} socket={socket} openConnection={openConnection} /></Protected>} />
+        <Route path="/user-content" element={<Protected><UserContent /></Protected>} />
       </Routes>
     </div>
     </AuthProvider>
