@@ -9,7 +9,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { makeStyles } from '@mui/styles';
-import logo from '../Components/Leetracer_plain.png'
+import logo from '../assets/Leetracer_plain.png'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,9 +47,10 @@ const pass = "Ramen";
 function Profile(props) {
 	const classes = useStyles();
     return (
-        <div>
-        	<h2>Problem History </h2>
+        <div style={{margin: '50px 40px 0px 40px'}}>
             <div className = {classes.container}>
+			<h1>Profile</h1>
+			<h3 style={{marginTop: '40px'}}>Problem History</h3>
             <TableContainer component={Paper}>
 		      <Table sx={{ minWidth: 700 }} aria-label="customized table">
 		        <TableHead>
