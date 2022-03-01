@@ -1,16 +1,19 @@
 
 import { makeStyles } from '@mui/styles';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ToggleButton from '@mui/material/ToggleButton';
+import CircularProgress from '@mui/material/CircularProgress';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-function Lobbymaking({openConnection, changeSocket}){
+function Lobbymaking({openConnection, changeSocket, socket}){
 	const classes = useStyles();
 	let navigate = useNavigate()
 	
-	const [diff, setDiff] = useState('easy');
+	const [diff, setDiff] = useState('Easy');
 	const [type, setType] = useState('random');
+	const [code, setCodeSearch] = useState(null)
+	const [waiting, setWaiting] = useState(false)
 	const [lobbyCode, setCode] = useState("")
 
 	const handleType = (event, newType) => {
@@ -32,9 +35,23 @@ function Lobbymaking({openConnection, changeSocket}){
 			console.log("Connected to socket server");
 			changeSocket(socket)
 
-			socket.emit("create", diff)
-
+			if(type === "random"){
+				socket.emit("search", diff)
+			} else if(type === "private"){
+				socket.emit("create", diff)
+			}
 		});
+
+		socket.on("searching", (code) => {
+			console.log("Searching for opponents w/ code", code)
+			setCodeSearch(code)
+			setWaiting(true)
+		})
+
+		socket.on("match", (code) => {
+			setWaiting(false)
+			navigate(`/race/${code}`)
+		})
 		  
 		socket.on("disconnect", () => {
 			console.log("Disconnected from socket server"); 
@@ -51,8 +68,28 @@ function Lobbymaking({openConnection, changeSocket}){
 
 	}
 
+	let handleStop = () => {
+		//console.log("Stopping searching for opponents w/ code", code)
+		setWaiting(false)
+		socket.emit('cancel', code)
+	}
+
+	useEffect(()=>{
+		return () => {
+			socket.removeAllListeners();
+		  };
+	}, [])
+
 
 	return(
+	<React.Fragment>
+		{waiting && <div className={classes.waitingContainer}>
+			<div className={classes.waitingInner}>
+				<p className={classes.waitingText}>Finding opponent</p>
+				<CircularProgress style={{height: '85px', width: '85px', marginBottom: '30px', marginTop: '20px'}} />
+				<button className={classes.stopButton} onClick={handleStop}>Stop Searching</button>
+			</div>
+		</div>}
 	<div>
 		<div className={classes.container}>
 			<div className='leftBox'>
@@ -83,13 +120,13 @@ function Lobbymaking({openConnection, changeSocket}){
 			      color='success'
 			      size='small'
 		    	>
-				      <ToggleButton value="easy">
+				      <ToggleButton value="Easy">
 				        Easy
 				      </ToggleButton>
-				      <ToggleButton value="medium">
+				      <ToggleButton value="Medium">
 				        Medium
 				      </ToggleButton>
-				      <ToggleButton value="hard">
+				      <ToggleButton value="Hard">
 				        Hard
 				      </ToggleButton>
 				</ToggleButtonGroup>
@@ -113,7 +150,7 @@ function Lobbymaking({openConnection, changeSocket}){
 		    <button className={classes.buttonBlack} onClick={handleJoin}>Go</button>
 		</div>
 	</div>
-
+	</React.Fragment>
 
 	)
 }
@@ -133,8 +170,43 @@ const useStyles = makeStyles(theme => ({
         alignItems:'center'
 
     },
-   body: {
-
+	waitingContainer: {
+		position: 'absolute',
+		zIndex: '3',
+		backgroundColor: 'rgba(0,0,0,0.5)',
+		height: '100%',
+		width: '100%'
+	},
+	waitingInner: {
+		height: '300px',
+		width: '500px',
+		backgroundColor: 'white',
+		margin: '70px auto auto auto',
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center'
+	},
+	waitingText: {
+		fontSize: '25px',
+		textAlign: 'center',
+		fontWeight: 'bold',
+		color: 'black'
+	},
+	stopButton: {
+		width: '150px',
+        height: '30px',
+        border: '0px',
+        borderRadius: "20em",
+        color: 'white',
+        backgroundColor: '#29313c',
+        textAlign: 'center',
+        textTransform: 'uppercase',
+        fontSize: '12px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        marginTop: '20px'
+	},
+  	body: {
         textAlign: 'center',
     },
     buttonBlack: {
@@ -166,10 +238,10 @@ const useStyles = makeStyles(theme => ({
         marginTop: '20px'
     },
     input: {
-    border: '1px solid #d9d9d9',
-    width:'50%',
-    padding: '10px',
-  
+		border: '1px solid #d9d9d9',
+		width:'50%',
+		padding: '10px',
+
 	},
 }))
 

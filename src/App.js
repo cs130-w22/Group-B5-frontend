@@ -14,10 +14,10 @@ import { API_URL } from './config'
 function App() {
   const [socket, changeSocket] = useState(null)
 
-  let openConnection = (lobbyType) => {
+  let openConnection = () => {
     let token = localStorage.getItem('token')
 
-    const sock = io(`${API_URL}/race/${lobbyType}`, 
+    const sock = io(`${API_URL}`, 
       {auth: {
         token
       }
