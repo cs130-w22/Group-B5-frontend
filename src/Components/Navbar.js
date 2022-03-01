@@ -24,6 +24,7 @@ function Navbar(props){
         return (
             <div className={classes.nav}>
                 <div className={classes.leftBox}>
+                    <img src={logo} className={classes.img} />
                     <Link to="/" className={classes.title}>Leetracer</Link>
                 </div>
                 <div className={classes.rightBox}>
