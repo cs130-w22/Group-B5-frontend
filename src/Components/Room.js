@@ -19,12 +19,16 @@ function Room({socket, openConnection, changeSocket}){
                 console.log("Connected to socket server");
                 changeSocket(socket)
 
-                sock.on("start", ()=>{
-                    navigate("/race")
+                sock.on("start", (problem_details)=>{
+                    navigate(`/race/${params.lobbyCode}`, { state: {problem: problem_details  }})
                 })
         
                 sock.on("join", (message, newUser) => {
                     setOpponents((prev) => [...prev, newUser])
+                })
+
+                socket.on("leave", (message, username) => {
+                    setOpponents((prev) => prev.filter(o => o !== username))
                 })
 
                 sock.emit('join', params.lobbyCode)
@@ -40,13 +44,17 @@ function Room({socket, openConnection, changeSocket}){
             });
         } else {
             //duplicate code
-            sock.on("start", ()=>{
-                navigate("/race")
+            sock.on("start", (problem_details)=>{
+                navigate(`/race/${params.lobbyCode}`, { state: {problem: JSON.parse(problem_details)  }})
             })
     
             sock.on("join", (message, newUser) => {
                 console.log(`${newUser} join the lobby`)
                 setOpponents((prev) => [...prev, newUser])
+            })
+
+            socket.on("leave", (message, username) => {
+                setOpponents((prev) => prev.filter(o => o !== username))
             })
         }
     }, [])
@@ -55,6 +63,12 @@ function Room({socket, openConnection, changeSocket}){
         console.log("Starting game with code", params.lobbyCode)
 		socket.emit('start', params.lobbyCode)
 	}
+
+    let handleLeave = () => {
+        console.log("Starting game with code", params.lobbyCode)
+        socket.emit('leave', params.lobbyCode)
+        navigate("/matchmaking")
+    }
 
     useEffect(()=>{
         return () =>{
@@ -75,7 +89,12 @@ function Room({socket, openConnection, changeSocket}){
                 </div>
             </div>
             <div className={classes.box}>
-                <button onClick={handleStart} className={classes.button}>Start Race</button>
+                <button onClick={handleStart} className={classes.button} style={{marginTop: '40px'}}>
+                    Start Race
+                </button>
+                <button onClick={handleLeave} className={classes.button} style={{fontSize: '16px', height: '40px', marginTop: '10px'}}>
+                    Leave Room
+                </button>
             </div>
         </div>
 	</div>
@@ -130,7 +149,6 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 'bold',
         backgroundColor: '#28313c',
         color: 'white',
-        margin: '35% auto',
         cursor: 'pointer'
     }
 }))

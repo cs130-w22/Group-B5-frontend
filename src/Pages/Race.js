@@ -1,20 +1,84 @@
 import { makeStyles } from '@mui/styles';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useParams, useNavigate } from 'react-router-dom'
 
-function Race(props) {
+function Race({socket, changeSocket}) {
     const classes = useStyles();
+    let location = useLocation();
+    let params = useParams();
+    let navigate = useNavigate();
 
     const [active, setActive] = useState(true);
     const [time, setTime] = useState(new Date().getTime());
+    const [probName, setProbName] = useState("")
     const [problem, setProblem] = useState('Load Problem Here');
-    const [language, setLanguage] = useState('c');
-    const [result, setResult] = useState('Load Result Here');
+    const [languages, setLanguages] = useState([])
+    const [language, setLanguage] = useState('cpp');
+    const [written, setWritten] = useState("")
+    const [results, setResults] = useState([]);
+    const [winner, setWinner] = useState(null)
 
-    React.useEffect(() => {
+    useEffect(() => {
         active && setTimeout(() => setTime(time+.1), 1000);
     }, [time]);
 
-    function showTime() {
+    useEffect(()=>{
+        setProbName(location.state.problem.title);
+        setProblem(location.state.problem.content);
+        setLanguages(location.state.problem.code);
+        setWritten(location.state.problem.code[0].code);
+
+        socket.on("win", (winner)=>{
+            console.log(`${winner} just won the race!`)
+            setWinner(winner)
+        })
+
+        socket.on("notification", (notif_obj)=>{
+            let notif = JSON.parse(notif_obj)
+            // let statusMap = {
+            //     0:"Accepted",
+            //     1:"Compile Error",
+            //     2:"Wrong Answer",
+            //     3:"Time Limit Exceeded",
+            //     4: "Memory Limit Exceeded",
+            //     5:"Output Limit Exceeded",
+            //     6:"Runtime Error",
+            //     7:"Internal Error",
+            //     8:"Unknown Error",
+            //     9:"Server Timeout",
+            //     10:"Submission Not Ready",
+            // }
+            let message;
+            switch(notif.status){
+                case 0: message = `${notif.username} passed all testcases!`; break;
+                case 1: message = `${notif.username}'s code failed to compile`; break;
+                case 2: message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}!`; break;
+                case 3: message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}, but got TLE!`; break;
+                case 4: message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}, but got MLE!`; break;
+                default: 
+                    if(notif.hasOwnProperty("total_correct") && notif.hasOwnProperty("total_testcases"))
+                        message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}, but some other error occurred!`
+                    else
+                        message = `${notif.username} submitted their code, but an issue occurred.`
+
+            }
+            console.log(notif)
+            setResults((prev)=> [...prev, message])
+        })
+
+        socket.on("submission", (submission_info) => {
+            let parsed = JSON.parse(submission_info)
+            console.log(parsed)
+        })
+
+        return () => {
+            changeSocket(null);
+            setWinner(null)
+            if(socket !== null) socket.disconnect()
+        }
+    }, [])
+
+    let showTime = () => {
         if (!active) {
             return 'Player X Wins';
         }
@@ -28,81 +92,54 @@ function Race(props) {
         return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
     }
 
-    {/* Need to get the problem description from backend and load into problem */}
-
-    {/* This is a pretty poor implementation of this part at the moment */}
-    function updateStarterCode(e) {
-        {/* Does the starter code depends on the problem? */}
-        var starterCode;
-        switch(e) {
-            case 'c':
-                starterCode = 
-`#include <stdio.h>
-int main(){
-\tprintf("Hello C Language");
-\treturn 0;
-}`; break;
-            case 'c++':
-                starterCode =
-`Starter C++ Code`; break;
-            case 'java':
-                starterCode =
-`Starter Java Code`; break;
-            case 'python':
-                starterCode =
-`Starter Python Code`; break;
-            default:
-                starterCode = "";
-                break;
-        }
-        document.getElementById('solution').value = starterCode;
+    let handleSubmitButton = () => {
+        socket.emit('submit', params.lobbyCode, language, written)
     }
 
-    function handleSubmitButton() {
-        setResult('Send solution to backend and display test results here.');
-        {/* Pass document.getElementById('solution').value and language to backend */}
-        {/* Get test result summary from backend and set result */}
+    let changeLang = (langNum) => {
+        setLanguage(languages[langNum].langSlug)
+        setWritten(languages[langNum].code)
     }
 
-    function handleQuitButton() {
-        setResult('Player quit the game. Notify the opponent that the game has ended.');
-        setActive(false);
-        {/* Notify opponent that the player has left */}
-        {/* Should the player be taken back to the home page? */}
+    let handleQuitButton = () => {
+        socket.emit('leave', params.lobbyCode);
+        socket.disconnect();
+        navigate("/matchmaking")
     }
 
     return (
+        <React.Fragment>
+        {winner && <div className={classes.waitingContainer}>
+			<div className={classes.waitingInner}>
+				<p className={classes.waitingText}>Game Over</p>
+                <p className={classes.waitingText}>{winner} has won the race!</p>
+				<button className={classes.stopButton} onClick={handleQuitButton}>Back to Matchmaking</button>
+			</div>
+		</div>}
         <div className={classes.container}>
             <div className={classes.row}>
-                <text className={classes.time_box}>{showTime()}</text>
+                <div className={classes.time_box}>{showTime()}</div>
             </div>
 
             <div className={classes.row}>
                 {/* Left */}
                 <div className={classes.item}>
-                    <p className={classes.label}>Problem:</p>
-                    <textarea className={classes.problem_box} value={problem} readOnly></textarea>
+                    <p className={classes.label}>Problem: {probName}</p>
+                    <div className={classes.problem_box} readOnly dangerouslySetInnerHTML={{__html: problem}} />
 
                 </div>
 
                 {/* Right */}
                 <div className={classes.item}>
                     <p className={classes.label}>Solution:</p>
-                    <textarea className={classes.solution_box} id='solution' spellcheck='false' placeholder='select a language' onKeyDown={(e) => {
-                        if ( e.key === 'Tab' && !e.shiftKey ) {
-                            document.getElementById('solution').value+='\t';
-                            e.preventDefault();
-                            return false; }
-                    }}></textarea>
+                    <textarea className={classes.solution_box} value={written} onChange={(e)=>{setWritten(e.target.value)}} />
 
                     <div className={classes.submission}>
-                        
                         {/* Language selector dropdown */}
-                        <select className={classes.lang_sel} onChange={(e) => setLanguage(e.target.value)} onChange={(e) => updateStarterCode(e.target.value)}>
-                            <option value='c'>C</option>
-                            <option value='c++'>C++</option>
-                            <option value='java'>Java</option>
-                            <option value='python'>Python</option>
+                        <select className={classes.lang_sel} onChange={(e) => setLanguage(e.target.value)} onChange={(e) => changeLang(e.target.value)}>
+                            {languages.map((l, i)=> {
+                                return <option key={i} value={i}>{l.lang}</option>
+                            })}
                         </select>
                         
                         <div className={classes.buttons}>
@@ -116,11 +153,14 @@ int main(){
 
             {/* Bottom */}
             <div className={classes.row}>
-                
-                <text className={classes.result_box}>{result}</text>
-                
+                <div className={classes.result_box}>
+                    {results.map((r, i) => {
+                        <p key={i}>{r}</p>
+                    })}
+                </div>
             </div>
         </div>
+        </React.Fragment>
     )
     
 }
@@ -150,12 +190,11 @@ const useStyles = makeStyles(theme => ({
         display: 'inline-block',
         float: 'right',
     },
-
     time_box: {
-        width: '15%',
-        height: '40px',
+        width: '16%',
+        height: '25px',
         resize: 'none',
-        paddingTop: '20px',
+        paddingTop: '5px',
         fontSize: '20px',
         fontFamily: 'monospace',
         textAlign: 'center',
@@ -171,6 +210,8 @@ const useStyles = makeStyles(theme => ({
         fontSize: '17px',
         fontFamily: 'monospace',
         outline: 'none',
+        border: '1px solid black',
+        overflow: 'scroll'
     },
     solution_box: {
         width: '96.5%',
@@ -180,11 +221,12 @@ const useStyles = makeStyles(theme => ({
         fontSize: '15px',
         fontFamily: 'monospace',
         outline: 'none',
+        border: '1px solid black',
+        color: 'black'
     },
     result_box: {
         width: '91.7%',
         height: '100px',
-        resize: 'none',
         padding: '15px',
         fontSize: '17px',
         fontFamily: 'monospace',
@@ -230,7 +272,30 @@ const useStyles = makeStyles(theme => ({
         cursor: 'pointer',
         marginRight: '20px',
     },
+    waitingContainer: {
+		position: 'absolute',
+		zIndex: '3',
+		backgroundColor: 'rgba(0,0,0,0.5)',
+		height: '100%',
+		width: '100%'
+	},
+	waitingInner: {
+		height: '300px',
+		width: '500px',
+		backgroundColor: 'white',
+		margin: '70px auto auto auto',
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center'
+	},
+	waitingText: {
+		fontSize: '25px',
+		textAlign: 'center',
+		fontWeight: 'bold',
+		color: 'black'
+	},
 
 }))
 
 export default Race;
+

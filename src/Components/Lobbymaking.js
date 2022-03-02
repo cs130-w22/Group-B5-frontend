@@ -15,6 +15,7 @@ function Lobbymaking({openConnection, changeSocket, socket}){
 	const [code, setCodeSearch] = useState(null)
 	const [waiting, setWaiting] = useState(false)
 	const [lobbyCode, setCode] = useState("")
+	let t = null;
 
 	const handleType = (event, newType) => {
 	    setType(newType);
@@ -31,8 +32,9 @@ function Lobbymaking({openConnection, changeSocket, socket}){
 	let handleMatchmaking = () => {
 		let socket = openConnection(type);
 
-		socket.on("connect", () => {
+		socket.on("connect", async () => {
 			console.log("Connected to socket server");
+			t = socket;
 			changeSocket(socket)
 
 			if(type === "random"){
@@ -50,7 +52,11 @@ function Lobbymaking({openConnection, changeSocket, socket}){
 
 		socket.on("match", (code) => {
 			setWaiting(false)
-			navigate(`/race/${code}`)
+			//navigate(`/race/${code}`)
+		})
+
+		socket.on("start", (problem_details)=>{
+			navigate(`/race/${code}`, { state: {problem: JSON.parse(problem_details) }})
 		})
 		  
 		socket.on("disconnect", () => {
@@ -74,9 +80,13 @@ function Lobbymaking({openConnection, changeSocket, socket}){
 		socket.emit('cancel', code)
 	}
 
+	let getSocket = () => t;
+
 	useEffect(()=>{
+		if(socket !== null) socket.disconnect()
 		return () => {
-			socket.removeAllListeners();
+			console.log("after",getSocket())
+			getSocket().removeAllListeners();
 		  };
 	}, [])
 

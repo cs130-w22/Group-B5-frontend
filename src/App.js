@@ -34,7 +34,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/race" element={<Race />} />
+        <Route path="/race/:lobbyCode" element={<Race changeSocket={changeSocket} socket={socket} />} />
         <Route path="/matchmaking/*" 
           element={<Protected><Matchmaking changeSocket={changeSocket} socket={socket} openConnection={openConnection} /></Protected>} />
       </Routes>
