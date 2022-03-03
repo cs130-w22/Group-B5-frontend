@@ -80,7 +80,7 @@ function Race({socket, changeSocket}) {
 
     let showTime = () => {
         if (!active) {
-            return 'Player X Wins';
+            return `Player ${winner}  Wins`;
         }
 
         var curr = new Date().getTime();
@@ -93,7 +93,8 @@ function Race({socket, changeSocket}) {
     }
 
     let handleSubmitButton = () => {
-        socket.emit('submit', params.lobbyCode, language, written)
+        if(!winner)
+            socket.emit('submit', params.lobbyCode, language, written)
     }
 
     let changeLang = (langNum) => {
@@ -155,7 +156,7 @@ function Race({socket, changeSocket}) {
             <div className={classes.row}>
                 <div className={classes.result_box}>
                     {results.map((r, i) => {
-                        <p key={i}>{r}</p>
+                        <p key={i} className={classes.notif}>{r}</p>
                     })}
                 </div>
             </div>
@@ -169,6 +170,10 @@ const useStyles = makeStyles(theme => ({
     container: {
         margin: 'auto auto auto auto',
         backgroundColor: 'white',   
+    },
+    notif: {
+        fontSize: '12px',
+        margin: '2px'
     },
     row: {
         margin: 'auto auto auto auto',
@@ -233,6 +238,7 @@ const useStyles = makeStyles(theme => ({
         outline: 'none',
         border: 'solid #4f4f4f 1px',
         borderRadius: '2px',
+        overflow: 'scroll'
     },
 
     lang_sel: {
