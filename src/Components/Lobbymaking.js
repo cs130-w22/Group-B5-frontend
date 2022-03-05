@@ -49,11 +49,12 @@ function Lobbymaking({openConnection, changeSocket, socket}){
 		})
 
 		socket.on("match", (code) => {
+			setCodeSearch(code)
 			setWaiting(false)
 			//navigate(`/race/${code}`)
 		})
 
-		socket.on("start", (problem_details)=>{
+		socket.on("start", (problem_details, code)=>{
 			socket.removeAllListeners()
 			navigate(`/race/${code}`, { state: {problem: JSON.parse(problem_details) }})
 		})

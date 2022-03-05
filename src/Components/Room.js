@@ -25,7 +25,7 @@ function Room({socket, openConnection, changeSocket}){
                 changeSocket(sock)
 
                 sock.on("start", (problem_details)=>{
-                    navigate(`/race/${params.lobbyCode}`, { state: {problem: problem_details  }})
+                    navigate(`/race/${params.lobbyCode}`, { state: {problem: JSON.parse(problem_details)  }})
                 })
         
                 sock.on("join", (message, all) => {

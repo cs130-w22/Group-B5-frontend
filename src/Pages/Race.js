@@ -1,5 +1,6 @@
 import { makeStyles } from '@mui/styles';
 import React, { useState, useEffect } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useLocation, useParams, useNavigate } from 'react-router-dom'
 
 function Race({socket, changeSocket}) {
@@ -17,12 +18,19 @@ function Race({socket, changeSocket}) {
     const [written, setWritten] = useState("")
     const [results, setResults] = useState([]);
     const [winner, setWinner] = useState(null)
+    const [error, setError] = useState(false)
+    const [waiting, setWaiting] = useState(false)
 
     useEffect(() => {
         active && setTimeout(() => setTime(time+.1), 1000);
     }, [time]);
 
     useEffect(()=>{
+        if(!socket){
+            setError(true)
+            return;
+        }
+
         setProbName(location.state.problem.title);
         setProblem(location.state.problem.content);
         setLanguages(location.state.problem.code);
@@ -31,6 +39,10 @@ function Race({socket, changeSocket}) {
         socket.on("win", (winner)=>{
             console.log(`${winner} just won the race!`)
             setWinner(winner)
+        })
+
+        socket.on("leave", (message) => {
+            setResults((prev)=> [...prev, message])
         })
 
         socket.on("notification", (notif_obj)=>{
@@ -52,12 +64,12 @@ function Race({socket, changeSocket}) {
             switch(notif.status){
                 case 0: message = `${notif.username} passed all testcases!`; break;
                 case 1: message = `${notif.username}'s code failed to compile`; break;
-                case 2: message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}!`; break;
-                case 3: message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}, but got TLE!`; break;
-                case 4: message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}, but got MLE!`; break;
+                case 2: message = `${notif.username} just passed ${notif.total_correct} / ${notif.total_testcases} testcases!`; break;
+                case 3: message = `${notif.username} just passed ${notif.total_correct} / ${notif.total_testcases} testcases, but got TLE!`; break;
+                case 4: message = `${notif.username} just passed ${notif.total_correct} / ${notif.total_testcases} testcases, but got MLE!`; break;
                 default: 
                     if(notif.hasOwnProperty("total_correct") && notif.hasOwnProperty("total_testcases"))
-                        message = `${notif.username} just passed ${notif.total_correct} out of ${notif.total_testcases}, but some other error occurred!`
+                        message = `${notif.username} just passed ${notif.total_correct} / ${notif.total_testcases} testcases, but some other error occurred!`
                     else
                         message = `${notif.username} submitted their code, but an issue occurred.`
 
@@ -67,8 +79,17 @@ function Race({socket, changeSocket}) {
         })
 
         socket.on("submission", (submission_info) => {
+            setWaiting(false)
             let parsed = JSON.parse(submission_info)
+
             console.log(parsed)
+            let message;
+            if(parsed.total_correct === parsed.total_testcases)
+                message = `YOUR SUBMISSION: You passed all testcases! Congratulations on winning the race!`
+            else 
+                message = `YOUR SUBMISSION: You passed ${parsed.total_correct}/${parsed.total_testcases} testcases. 
+                    Failed testcase: given'${parsed.input}', expecting ${parsed.expected_output}, output '${parsed.code_output}'`
+            setResults((prev)=> [...prev, message])
         })
 
         return () => {
@@ -93,8 +114,10 @@ function Race({socket, changeSocket}) {
     }
 
     let handleSubmitButton = () => {
-        if(!winner)
+        if(!winner && !waiting){
+            setWaiting(true)
             socket.emit('submit', params.lobbyCode, language, written)
+        }
     }
 
     let changeLang = (langNum) => {
@@ -103,8 +126,10 @@ function Race({socket, changeSocket}) {
     }
 
     let handleQuitButton = () => {
-        socket.emit('leave', params.lobbyCode);
-        socket.disconnect();
+        if(socket){
+            socket.emit('leave', params.lobbyCode);
+            socket.disconnect();
+        }
         navigate("/matchmaking")
     }
 
@@ -114,7 +139,18 @@ function Race({socket, changeSocket}) {
 			<div className={classes.waitingInner}>
 				<p className={classes.waitingText}>Game Over</p>
                 <p className={classes.waitingText}>{winner} has won the race!</p>
-				<button className={classes.stopButton} onClick={handleQuitButton}>Back to Matchmaking</button>
+				<button className={classes.submit_btn} onClick={handleQuitButton} 
+                    style={{width: '180px', height: '60px', fontSize: '15px', marginTop: '15px'}}>
+                    Back to Matchmaking
+                </button>
+			</div>
+		</div>}
+        {error && <div className={classes.waitingContainer}>
+			<div className={classes.waitingInner} style={{height: '350px', width: '600px'}}>
+				<h1 className={classes.waitingText} style={{fontSize: '40px', margin: '40px 0 10px 0'}}>An Error Occured</h1>
+                <p className={classes.waitingText}>You're unable to race because an error has occurred. Please attempt matchmaking again</p>
+				<button className={classes.submit_btn} style={{width: '180px', height: '60px', fontSize: '15px', marginTop: '15px'}}
+                     onClick={handleQuitButton}>Back to Matchmaking</button>
 			</div>
 		</div>}
         <div className={classes.container}>
@@ -144,8 +180,10 @@ function Race({socket, changeSocket}) {
                         </select>
                         
                         <div className={classes.buttons}>
-                            <button className={classes.submit_btn} onClick={() => handleSubmitButton()}>Submit</button>
-                            <button className={classes.quit_btn} onClick={() => handleQuitButton()}>Quit</button>
+                            <button className={classes.submit_btn} onClick={() => handleSubmitButton()}>
+                                {!waiting ? "Submit" : <CircularProgress style={{height: '25px', width: '25px', color: 'white', margin: 0, padding: 0}} />}
+                            </button>
+                            <button className={classes.quit_btn} onClick={handleQuitButton}>Quit</button>
                         </div>
                     </div>
 
@@ -156,7 +194,7 @@ function Race({socket, changeSocket}) {
             <div className={classes.row}>
                 <div className={classes.result_box}>
                     {results.map((r, i) => {
-                        <p key={i} className={classes.notif}>{r}</p>
+                        return <p key={i} className={classes.notif}>{r}</p>
                     })}
                 </div>
             </div>
@@ -172,7 +210,7 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: 'white',   
     },
     notif: {
-        fontSize: '12px',
+        fontSize: '17px',
         margin: '2px'
     },
     row: {
@@ -192,7 +230,8 @@ const useStyles = makeStyles(theme => ({
         marginTop: '5px',
     },
     buttons: {
-        display: 'inline-block',
+        display: 'flex',
+        alignItems: 'center',
         float: 'right',
     },
     time_box: {
@@ -283,7 +322,7 @@ const useStyles = makeStyles(theme => ({
 		zIndex: '3',
 		backgroundColor: 'rgba(0,0,0,0.5)',
 		height: '100%',
-		width: '100%'
+		width: '100%',
 	},
 	waitingInner: {
 		height: '300px',
