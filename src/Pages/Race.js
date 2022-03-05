@@ -84,11 +84,13 @@ function Race({socket, changeSocket}) {
 
             console.log(parsed)
             let message;
-            if(parsed.total_correct === parsed.total_testcases)
-                message = `YOUR SUBMISSION: You passed all testcases! Congratulations on winning the race!`
-            else 
-                message = `YOUR SUBMISSION: You passed ${parsed.total_correct}/${parsed.total_testcases} testcases. 
-                    Failed testcase: given'${parsed.input}', expecting ${parsed.expected_output}, output '${parsed.code_output}'`
+	    if(parsed.total_correct && parsed.total_testcases) {
+               if(parsed.total_correct === parsed.total_testcases)
+                   message = `YOUR SUBMISSION: You passed all testcases! Congratulations on winning the race!`
+               else
+                   message = `YOUR SUBMISSION: You passed ${parsed.total_correct}/${parsed.total_testcases} testcases.
+                       Failed testcase: given'${parsed.input}', expecting ${parsed.expected_output}, output '${parsed.code_output}'`
+            }
             setResults((prev)=> [...prev, message])
         })
 
