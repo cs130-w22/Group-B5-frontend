@@ -4,6 +4,7 @@ import { AuthProvider } from './config'
 import Landing from './Pages/Landing'
 import Login from './Components/Login'
 import Signup from './Components/Signup'
+import Race from './Pages/Race'
 import Nav from './Components/Navbar'
 import Protected from './Components/Protected'
 import Matchmaking from './Pages/Matchmaking'
@@ -15,10 +16,10 @@ import Profile from './Pages/Profile'
 function App() {
   const [socket, changeSocket] = useState(null)
 
-  let openConnection = (lobbyType) => {
+  let openConnection = () => {
     let token = localStorage.getItem('token')
 
-    const sock = io(`${API_URL}/race/${lobbyType}`, 
+    const sock = io(`${API_URL}`, 
       {auth: {
         token
       }
@@ -35,6 +36,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile/*" element={<Profile />}/>
+        <Route path="/race/:lobbyCode" element={<Race changeSocket={changeSocket} socket={socket} />} />
         <Route path="/matchmaking/*" 
           element={<Protected><Matchmaking changeSocket={changeSocket} socket={socket} openConnection={openConnection} /></Protected>} />  
       </Routes>
