@@ -38,38 +38,33 @@ function labelData(title, difficulty, time, winner) {
   return { title, difficulty, time, winner };
 }
 
-//hopefully this can be easily changed to format the backend output?
-//fake data
-const rows = [
-  labelData('Compare Version Numbers', 'Medium', '14:54', 'User1'),
-  labelData('Two Sum', 'Easy', '11:20', "User3"),
-];
-
-
 
 function Profile(props) {
 	const classes = useStyles();
 	const [data, setData] = React.useState([]);
+  const [username, setUsername] = React.useState("")
 	React.useEffect(async ()=> {        
         try {
            	let username = localStorage.getItem('username')
+             setUsername(username)
            	let res = await axios.get(`${API_URL}/stats/user/${username}`)
             setData(res.data.races);            
         } catch(e){
-           	console.log('error wtf')
+           	console.log('Error retrieving profile')
         }
 	}, []);
 
     const DisplayData=data.map(
-        (row)=>{
+        (row, i)=>{
             return(
-                <TableBody>
+                <TableBody key={i}>
 		            <StyledTableRow key={row.title}>
 		              <StyledTableCell align= "center" component="th" scope="row">
 		                {row.title}
 		              </StyledTableCell>
 		              <StyledTableCell align="center">{row.difficulty}</StyledTableCell>
 		              <StyledTableCell align="center">{row.timeToSolve}</StyledTableCell>
+                  <StyledTableCell align="center">{row.numParticipants}</StyledTableCell>
 		              <StyledTableCell align="center">{row.winner}</StyledTableCell>
 		            </StyledTableRow> 
                 </TableBody>
@@ -79,7 +74,7 @@ function Profile(props) {
     return (
         <div style={{margin: '50px 40px 0px 40px'}}>
             <div className = {classes.container}>
-			<h1>Profile</h1>
+			<h1>{username}'s Profile</h1>
 			<h3 style={{marginTop: '40px'}}>Problem History</h3>
             <TableContainer component={Paper}>
 		      <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -88,12 +83,11 @@ function Profile(props) {
 		            <StyledTableCell align="center">Title</StyledTableCell>
 		            <StyledTableCell align="center">Difficulty</StyledTableCell>
 		            <StyledTableCell align="center">Time</StyledTableCell>
+                <StyledTableCell align="center">Number Participants</StyledTableCell>
 		            <StyledTableCell align="center">Winner</StyledTableCell>
 		          </TableRow>
 		        </TableHead>
-		
-		        	{console.log('hiyo')}
-		          	{DisplayData}
+		          {DisplayData}
 		      </Table>
 		    </TableContainer>
 		    </div>
