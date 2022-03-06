@@ -1,6 +1,7 @@
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom'
 import { useAuth } from '../config'
+import logo from '../assets/Leetracer_plain.png'
 
 function Navbar(props){
     const classes = useStyles();
@@ -9,6 +10,7 @@ function Navbar(props){
         return (
             <div className={classes.nav}>
                 <div className={classes.leftBox}>
+                    <img src={logo} className={classes.img} />
                     <Link to="/" className={classes.title}>Leetracer</Link>
                 </div>
                 <div className={classes.rightBox}>
@@ -22,6 +24,7 @@ function Navbar(props){
         return (
             <div className={classes.nav}>
                 <div className={classes.leftBox}>
+                    <img src={logo} className={classes.img} />
                     <Link to="/" className={classes.title}>Leetracer</Link>
                 </div>
                 <div className={classes.rightBox}>
@@ -54,7 +57,13 @@ const useStyles = makeStyles(theme => ({
         fontWeight: 'bold'
     },
     leftBox: {
-        marginLeft: '50px'
+        marginLeft: '50px',
+        display: 'flex',
+        alignItems: 'center'
+    },
+    img: {
+        height: '50px',
+        margin: '0'
     },
     rightBox: {
         width: '500px',
