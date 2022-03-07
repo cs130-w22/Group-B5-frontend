@@ -15,7 +15,6 @@ function Navbar(props){
                 </div>
                 <div className={classes.rightBox}>
                     <Link to="/matchmaking" className={classes.item} style={{ marginRight: '.7rem' }}>Compete</Link>
-                    <Link to="/user-content" className={classes.item} style={{ marginRight: '.7rem' }}>User Content</Link>
                     <Link to="/profile" className={classes.button}>My Profile</Link>
                 </div>
             </div>
@@ -29,7 +28,6 @@ function Navbar(props){
                 </div>
                 <div className={classes.rightBox}>
                     <Link to="/matchmaking" className={classes.item} style={{ marginRight: '.7rem' }}>Compete</Link>
-                    <Link to="/user-content" className={classes.item} style={{ marginRight: '.7rem' }}>User Content</Link>
                     <Link to="/signup" className={classes.button}>Sign Up</Link>
                 </div>
             </div>
@@ -66,7 +64,7 @@ const useStyles = makeStyles(theme => ({
         margin: '0'
     },
     rightBox: {
-        width: '500px',
+        width: '350px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
