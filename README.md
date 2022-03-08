@@ -1,3 +1,5 @@
+Hosted application: https://leetracer.herokuapp.com/ 
+
 Make sure you have Node.js installed.
 
 ## Running Project
