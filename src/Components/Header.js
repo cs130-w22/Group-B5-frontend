@@ -15,7 +15,8 @@ function Header(props) {
                 </Link>
             </div>
             <div className={classes.item}>
-                <img src='https://blog.greendot.org/wp-content/uploads/sites/13/2021/09/placeholder-image.png'/>
+                <img className={classes.img} 
+                src='https://akm-img-a-in.tosshub.com/indiatoday/images/story/202012/chris-ried-ieic5Tq8YMk-unsplas_1200x768.jpeg?bEhcYQAShJnLf0Mtu4JYq8YzICfhz2rB&size=770:433'/>
             </div>
         </div>
     )
@@ -29,6 +30,11 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: '#eef1f4',
         display: 'flex',
         justifyContent: 'space-around',
+    },
+    img: {
+        height: '350px',
+        marginTop: '70px',
+        borderRadius: '7px'
     },
     item: {
         width: '40%',
